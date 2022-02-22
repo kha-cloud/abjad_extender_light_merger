@@ -1,0 +1,15 @@
+{
+	"merges": [
+		{
+			"path": "./",
+			"excludes": [
+				"./modules",
+				"./Dist_ADMIN_APP"
+			]
+		},
+		{
+			"path": "./modules/pcv_v1"
+		}
+	],
+	"final": "Dist_ADMIN_APP"
+}
