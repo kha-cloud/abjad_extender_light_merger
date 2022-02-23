@@ -42,12 +42,12 @@ if(Flags.help || Flags.h){
 	console.log("    --delete           Delete destination folder's content before starting");
 	console.log("    --merge-files      Merge similar files");
 	console.log("                       JSON files   : [npm deepmerge] is used");
-	console.log("                       * files      : For yielding:");
-	console.log("                                      #ABJAD_EXTENDER_YIELD_APPEND=section_name");
-	console.log("                                      #ABJAD_EXTENDER_YIELD_PREPEND=section_name");
-	console.log("                                      #ABJAD_EXTENDER_YIELD_REPLACE=section_name");
+	console.log("                       *    files   : For yielding:");
+	console.log("                                      #ABJAD_EXTENDER_YIELD=section_name#");
 	console.log("                                    : For section creation:");
-	console.log("                                      #ABJAD_EXTENDER_SECTION=section_name for creating sections");
+	console.log("                                      #ABJAD_EXTENDER_SECTION=section_name to Replace");
+	console.log("                                      #ABJAD_EXTENDER_SECTION_APPEND=section_name to Append");
+	console.log("                                      #ABJAD_EXTENDER_SECTION_PREPEND=section_name to Prepend");
 	console.log("    --help (-h)        Show Help");
 	console.log("    ");
 	console.log("    COMMAND: lightmgr <OPTIONS>");
