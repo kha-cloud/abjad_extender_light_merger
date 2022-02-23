@@ -1,15 +1,15 @@
 {
 	"merges": [
 		{
-			"path": "./",
+			"path": "@",
 			"excludes": [
-				"./modules",
-				"./Dist_ADMIN_APP"
+				"@/modules",
+				"@/Dist_ADMIN_APP"
 			]
 		},
 		{
-			"path": "./modules/pcv_v1"
+			"path": "@/modules/pcv_v1"
 		}
 	],
-	"final": "Dist_ADMIN_APP"
+	"final": "@/Dist_ADMIN_APP"
 }
