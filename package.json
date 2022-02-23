@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "light-merger.js",
+  "preferGlobal": true,
+  "bin": {
+    "lightmgr": "./light-merger.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Khalil ben zineb",
   "license": "ISC",
   "dependencies": {
-    "chokidar": "^3.5.2"
+    "chokidar": "^3.5.2",
+    "deepmerge": "^4.2.2"
   }
 }
