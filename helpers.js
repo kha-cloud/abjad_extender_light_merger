@@ -9,13 +9,14 @@ var resultHandler = function(err) {
 var deleteFolderContent = (folder) => {
 	var content = fs.readdirSync(folder);
 	for (const f of content) {
-		if (fs.lstatSync(folder+"/"+f).isDirectory()) {
-			// console.log("DIR " + f);
-			fs.removeSync(folder+"/"+f, { recursive: true });
-		} else {
-			// console.log(f);
-			fs.unlinkSync(folder+"/"+f);
-		}
+    fs.removeSync(folder+"/"+f);
+		// if (fs.lstatSync(folder+"/"+f).isDirectory()) {
+		// 	// console.log("DIR " + f);
+		// 	fs.removeSync(folder+"/"+f, { recursive: true });
+		// } else {
+		// 	// console.log(f);
+		// 	fs.unlinkSync(folder+"/"+f);
+		// }
 	}
 };
 
