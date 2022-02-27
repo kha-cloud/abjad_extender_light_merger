@@ -10,6 +10,7 @@ var deleteFolderContent = (folder) => {
 	var content = fs.readdirSync(folder);
 	for (const f of content) {
     fs.removeSync(folder+"/"+f);
+    console.log(" Deleting "+f);
 		// if (fs.lstatSync(folder+"/"+f).isDirectory()) {
 		// 	// console.log("DIR " + f);
 		// 	fs.removeSync(folder+"/"+f, { recursive: true });
