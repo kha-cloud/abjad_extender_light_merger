@@ -73,6 +73,7 @@ const Files = {};
 var toWatchList = [];
 var toExcludeList = [];
 var toExcludeFilesList = [];
+var mergesToDestinations = {};
 var finalDir = (config.final || "").replace(/@\//g, rootDir + "/").replace(/@/g, rootDir);
 if(finalDir.slice(-1) == "/") finalDir = finalDir.slice(0, -1);
 
@@ -119,15 +120,24 @@ var generateMultiLevelFile = (path, newPath, mode) => {
 
 var getNewPath = (path) => {
 	// Reduce is used because EXP: the file /parent/child/a.txt is in /parent/child and /parent and the longer is true
-	return path.replace(
-		toWatchList.filter((p) => {
-			return path.includes(p);
-		})
-		.reduce((a, b) => {
-			return (a.length > b.length) ? a : b;
-		}),
-		finalDir
+	var parentFolder = toWatchList.filter((p) => {
+		return path.includes(p);
+	})
+	.reduce((a, b) => {
+		return (a.length > b.length) ? a : b;
+	});
+
+	if(mergesToDestinations[path]){
+		return path.replace(
+			parentFolder,
+			mergesToDestinations[path]
 		);
+	}else{
+		return path.replace(
+			parentFolder,
+			finalDir
+		);
+	}
 };
 
 var initWatcher = () => {
@@ -144,6 +154,10 @@ var initWatcher = () => {
 				}else{
 					toExcludeFilesList.push(excludedPath);
 				}
+			}
+			if(merge.to){
+				mergesToDestinations[newPath] = path.resolve(merge.to.replace(/@\//g, finalDir + "/").replace(/@/g, finalDir));
+				if(mergesToDestinations[newPath].slice(-1) == "/") mergesToDestinations[newPath] = mergesToDestinations[newPath].slice(0, -1);
 			}
 			return newPath;
 		})
