@@ -5,6 +5,10 @@ const fs = require("fs");
 const path = require("path"); 
 const merge = require('deepmerge')
 const Helpers = require('./helpers.js');
+var timerCallback = null;
+var initalTimerCounter = 0;
+var initiatedFilesCounter = 0;
+var interval;
 
 //---------------------- GETTING PARAMS
 const Flags = {};// --log --no-watching --delete
@@ -127,18 +131,54 @@ var getNewPath = (path) => {
 		return (a.length > b.length) ? a : b;
 	});
 
-	if(mergesToDestinations[path]){
-		return path.replace(
+	var newPath;
+	if(mergesToDestinations[parentFolder]){
+		newPath = path.replace(
 			parentFolder,
-			mergesToDestinations[path]
+			mergesToDestinations[parentFolder]
 		);
 	}else{
-		return path.replace(
+		newPath = path.replace(
 			parentFolder,
 			finalDir
 		);
 	}
+	return newPath;
 };
+
+var resultHandler = (Flags["log"]) ? Helpers.resultHandler : ()=>{};
+
+var READY_EVENT = async () => {
+	await Helpers.delay(200);
+	// watcherAvailable = true;
+	// ('Initial scan complete. Ready for changes');
+	if(Flags["no-watching"]) {
+		watcher.close().then(() => console.log('All changes are done (without watching)'));
+		return;
+	}
+	console.clear();
+	console.log('________________________________________');
+	console.log('');
+	console.log('--------- Light Merger is ready --------');
+	console.log('________________________________________');
+	console.log('');
+	console.log('');
+	console.log('Listening for changes ...');
+}
+
+if(Flags["no-watching"]){
+	timerCallback = READY_EVENT;
+	READY_EVENT = ()=>{};
+	interval = setInterval(function(){
+		initalTimerCounter += 1;
+		if(initalTimerCounter > 4 && initiatedFilesCounter == 0){
+			clearInterval(interval);
+			if(Flags["log"]) console.log("cleared ready timer");
+			timerCallback();
+		}
+		//do whatever here..
+	}, 500);
+}
 
 var initWatcher = () => {
 	// console.log("initTMPWatcher() Started", 1);
@@ -186,6 +226,8 @@ var initWatcher = () => {
 	// var count = 0;
 	watcher
 		.on('add', async (path) => {
+			initalTimerCounter = 0;
+			initiatedFilesCounter ++;
 			if(toExcludeFilesList.includes(path)) return;
 			await Helpers.delay(200);
 			// count++;
@@ -198,16 +240,17 @@ var initWatcher = () => {
 							path
 						],
 					};
-					fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, Helpers.resultHandler);
+					fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
 				}else{
 					Files[getNewPath(path)].files.push(path);
 					generateMultiLevelFile(path, getNewPath(path), "add");
 				}
 			}else{
-				fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, Helpers.resultHandler);
+				fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
 			}
 			if(Flags["log"]) console.log(`File ${path} has been added`);
 			// if (watcherAvailable) this.updater("add", path);
+			initiatedFilesCounter --;
 		})
 		.on('change', async (path) => {
 			if(Flags["no-watching"]) {
@@ -217,19 +260,19 @@ var initWatcher = () => {
 			await Helpers.delay(200);
 			if(Flags["merge-files"]) {
 				if(Files[getNewPath(path)].files.length == 1){
-					fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, Helpers.resultHandler);
+					fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
 				}else{
 					generateMultiLevelFile(path, getNewPath(path), "change");
 				}
 			}else{
-				fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, Helpers.resultHandler);
+				fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
 			}
 			if(Flags["log"]) console.log(`File ${path} has been changed`);
 			// if (watcherAvailable) this.updater("change", path);
 		})
 		.on('unlink', path => {
 			try {
-				fs.rm(getNewPath(path), Helpers.resultHandler);
+				fs.rm(getNewPath(path), resultHandler);
 			} catch (error) {
 				console.error(error);
 			}
@@ -238,36 +281,20 @@ var initWatcher = () => {
 		})
 		.on('addDir', path => {
 			if (getNewPath(path) == finalDir) return;
-			fs.mkdir(getNewPath(path), Helpers.resultHandler);
+			fs.mkdir(getNewPath(path), resultHandler);
 			if(Flags["log"]) console.log(`Directory ${path} has been added`);
 			// if (watcherAvailable) this.updater("addDir", path);
 		})
 		.on('unlinkDir', path => {
 			if(Flags["log"]) console.log(`Directory ${path} has been removed`);
-			fs.rmSync(getNewPath(path), { recursive: true });
+			fs.removeSync(getNewPath(path), { recursive: true });
 			// if (watcherAvailable) this.updater("unlinkDir", path);
 		})
 		.on('error', (error) => {
 			if(Flags["log"]) console.log(`Watcher error: ${error}`);
 			// if (watcherAvailable) this.updater("error", path);
 		})
-		.on('ready', async () => {
-			await Helpers.delay(200);
-			// watcherAvailable = true;
-			// ('Initial scan complete. Ready for changes');
-			if(Flags["no-watching"]) {
-				watcher.close().then(() => console.log('All changes are done (without watching)'));
-				return;
-			}
-			console.clear();
-			console.log('________________________________________');
-			console.log('');
-			console.log('--------- Light Merger is ready --------');
-			console.log('________________________________________');
-			console.log('');
-			console.log('');
-			console.log('Listening for changes ...');
-		});
+		.on('ready', READY_EVENT);
 	// console.log("Watcher events created");
 	// console.log("initTMPWatcher() Completed");
 };

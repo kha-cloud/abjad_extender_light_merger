@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("fs-extra");
 
 var resultHandler = function(err) { 
 	if(err) {
@@ -11,7 +11,7 @@ var deleteFolderContent = (folder) => {
 	for (const f of content) {
 		if (fs.lstatSync(folder+"/"+f).isDirectory()) {
 			// console.log("DIR " + f);
-			fs.rmSync(folder+"/"+f, { recursive: true });
+			fs.removeSync(folder+"/"+f, { recursive: true });
 		} else {
 			// console.log(f);
 			fs.unlinkSync(folder+"/"+f);
