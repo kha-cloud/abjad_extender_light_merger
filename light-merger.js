@@ -251,6 +251,7 @@ var initWatcher = () => {
 			if(Flags["log"]) console.log(`File ${path} has been added`);
 			// if (watcherAvailable) this.updater("add", path);
 			initiatedFilesCounter --;
+			initalTimerCounter = 0;
 		})
 		.on('change', async (path) => {
 			if(Flags["no-watching"]) {
