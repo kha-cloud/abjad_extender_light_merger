@@ -9,6 +9,10 @@
 		},
 		{
 			"path": "@/modules/pcv_v1"
+		},
+		{
+			"path": "@/some/distant/place/pcv_v1",
+			"to": "@/dist_sub_folder"
 		}
 	],
 	"final": "@/Dist_ADMIN_APP"
