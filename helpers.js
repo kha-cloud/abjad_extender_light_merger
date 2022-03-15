@@ -41,8 +41,8 @@ var abjadTextMerge = (strA, strB) => {
       }
       if(nextSectionKey){
         var res = nextData.join("\n");
-        if(nextOperation == "_APPEND") res = res + "#ABJAD_EXTENDER_YIELD="+nextSectionKey+"#";
-        if(nextOperation == "_PREPEND") res = "#ABJAD_EXTENDER_YIELD="+nextSectionKey+"#" + res;
+        if(nextOperation == "_APPEND") res = "#ABJAD_EXTENDER_YIELD="+nextSectionKey+"#" + res;
+        if(nextOperation == "_PREPEND") res = res + "#ABJAD_EXTENDER_YIELD="+nextSectionKey+"#";
         finalData = finalData.replace(new RegExp("#ABJAD_EXTENDER_YIELD="+nextSectionKey+"#", 'g'), res);
         nextSectionKey = null;
         nextOperation = "";
