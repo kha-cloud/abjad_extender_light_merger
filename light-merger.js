@@ -51,6 +51,7 @@ if(Flags.help || Flags.h){
 	console.log("                                    : For section creation:");
 	console.log("                                      #ABJAD_EXTENDER_SECTION=section_name to Replace");
 	console.log("                                      #ABJAD_EXTENDER_SECTION_APPEND=section_name to Append");
+	console.log("                                      #ABJAD_EXTENDER_SECTION_APPEND_LN=section_name to Append with a line break");
 	console.log("                                      #ABJAD_EXTENDER_SECTION_PREPEND=section_name to Prepend");
 	console.log("    --help (-h)        Show Help");
 	console.log("    ");
