@@ -27,7 +27,7 @@ var delay = (ms) => {
 var abjadTextMerge = (strA, strB) => {
   // var yields = (strA.match(/(#ABJAD_EXTENDER_YIELD=.*#)/g) || []).map( key => key.slice(0, -1).replace("#ABJAD_EXTENDER_YIELD=", ""));
   if(!strA.match(/(#ABJAD_EXTENDER_YIELD=.*#)/g)){
-    return strA;
+    return strB;
   }
   var finalData = strA;
   var lines = strB.split('\n');
