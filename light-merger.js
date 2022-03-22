@@ -127,7 +127,7 @@ var generateMultiLevelFile = (path, newPath, mode) => {
 	// Could be optimized for inital start to generate only once at the end by using the (mode & path) params
   if(Files[newPath].type.toUpperCase() == "JSON" ){
 		generateMultiLevelJSON(path, newPath, mode);
-	}else if("VUE HTML JSX TSX".includes(Files[newPath].type.toUpperCase()) ){
+	}else if("VUE JS CSS HTML JSX TSX".includes(Files[newPath].type.toUpperCase()) ){
 		generateMultiLevelHTML(path, newPath, mode);
 	}else{
 		generateMultiLevelTEXT(path, newPath, mode);
