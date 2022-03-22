@@ -83,24 +83,25 @@ var abjadHTMLMerge = (strA, strB) => {
         }
       }
       if(nextSectionKey){
-        var res = nextData.join("\n");
+        var res1 = nextData.join("\n");
+        var res2 = nextData.join("\n");
         // HTML
-        if(nextOperation == "_APPEND") res = "<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->" + res;
-        else if(nextOperation == "_APPEND_LN") res = "<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->\n" + res;
-        else if(nextOperation == "_PREPEND") res = res + "<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->";
-        finalData = finalData.replace(new RegExp("<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->", 'g'), res);
+        if(nextOperation == "_APPEND") res1 = "<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->" + res1;
+        else if(nextOperation == "_APPEND_LN") res1 = "<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->\n" + res1;
+        else if(nextOperation == "_PREPEND") res1 = res1 + "<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->";
+        finalData = finalData.replace(new RegExp("<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->", 'g'), res1);
         // JS
-        if(nextOperation == "_APPEND") res = "\/.ABJAD_EXTENDER_YIELD="+nextSectionKey+".\/" + res;
-        else if(nextOperation == "_APPEND_LN") res = "\/.ABJAD_EXTENDER_YIELD="+nextSectionKey+".\/\n" + res;
-        else if(nextOperation == "_PREPEND") res = res + "\/.ABJAD_EXTENDER_YIELD="+nextSectionKey+".\/";
-        finalData = finalData.replace(new RegExp("\/.ABJAD_EXTENDER_YIELD="+nextSectionKey+".\/", 'g'), res);
+        if(nextOperation == "_APPEND") res2 = "\/\*ABJAD_EXTENDER_YIELD="+nextSectionKey+"\*\/" + res2;
+        else if(nextOperation == "_APPEND_LN") res2 = "\/\*ABJAD_EXTENDER_YIELD="+nextSectionKey+"\*\/\n" + res2;
+        else if(nextOperation == "_PREPEND") res2 = res2 + "\/\*ABJAD_EXTENDER_YIELD="+nextSectionKey+"\*\/";
+        finalData = finalData.replace(new RegExp("\/.ABJAD_EXTENDER_YIELD="+nextSectionKey+".\/", 'g'), res2);
         nextSectionKey = null;
         nextOperation = "";
         nextData = [];
       }
       var tmp = line.replace("#ABJAD_EXTENDER_SECTION", "").split("=");
       nextOperation = tmp[0].toUpperCase();
-      nextSectionKey = tmp[1] || "_APPEND";
+      nextSectionKey = tmp[1];// || tmp[0] && "_APPEND";
     }else{
       if(nextSectionKey){
         nextData.push(line);
