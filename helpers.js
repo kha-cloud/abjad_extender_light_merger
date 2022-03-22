@@ -115,4 +115,5 @@ module.exports = {
   deleteFolderContent,
   resultHandler,
   abjadTextMerge,
+  abjadHTMLMerge,
 };
