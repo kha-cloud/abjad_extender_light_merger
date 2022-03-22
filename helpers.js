@@ -69,7 +69,6 @@ var abjadHTMLMerge = (strA, strB) => {
   if(!strA.match(/(ABJAD_EXTENDER_YIELD)/g)){
     return strB;
   }
-  console.log("PASS");
   var finalData = strA;
   var lines = strB.split('\n');
   var nextSectionKey = null;
@@ -85,10 +84,6 @@ var abjadHTMLMerge = (strA, strB) => {
       }
       if(nextSectionKey){
         var res = nextData.join("\n");
-        console.log("RES =");
-        console.log(res);
-        console.log("nextSectionKey");
-        console.log(nextSectionKey);
         // HTML
         if(nextOperation == "_APPEND") res = "<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->" + res;
         if(nextOperation == "_APPEND_LN") res = "<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->\n" + res;
