@@ -66,7 +66,7 @@ var abjadTextMerge = (strA, strB) => {
 
 var abjadHTMLMerge = (strA, strB) => {
   // var yields = (strA.match(/(#ABJAD_EXTENDER_YIELD=.*#)/g) || []).map( key => key.slice(0, -1).replace("#ABJAD_EXTENDER_YIELD=", ""));
-  if(!strA.match(/(<!--ABJAD_EXTENDER_YIELD=.*-->)/g)){
+  if(!strA.match(/(<!--ABJAD_EXTENDER_YIELD=.*-->)/g) && !strA.match(/(/\*ABJAD_EXTENDER_YIELD=.*\*/)/g)){
     return strB;
   }
   var finalData = strA;
