@@ -114,10 +114,21 @@ var generateMultiLevelTEXT = (path, newPath, mode) => {
   fs.writeFileSync(newPath, data);
 }
 
+var generateMultiLevelHTML = (path, newPath, mode) => {
+	var data;
+	data = fs.readFileSync(Files[newPath].files[0], 'utf8');
+	for (let i = 1; i < Files[newPath].files.length; i++) {
+		data = Helpers.abjadHTMLMerge(data, fs.readFileSync(Files[newPath].files[i], 'utf8'));
+	}
+  fs.writeFileSync(newPath, data);
+}
+
 var generateMultiLevelFile = (path, newPath, mode) => {
 	// Could be optimized for inital start to generate only once at the end by using the (mode & path) params
   if(Files[newPath].type.toUpperCase() == "JSON" ){
 		generateMultiLevelJSON(path, newPath, mode);
+	}else if("VUE HTML JSX TSX".includes(Files[newPath].type.toUpperCase()) ){
+		generateMultiLevelHTML(path, newPath, mode);
 	}else{
 		generateMultiLevelTEXT(path, newPath, mode);
 	}
