@@ -86,13 +86,13 @@ var abjadHTMLMerge = (strA, strB) => {
         var res = nextData.join("\n");
         // HTML
         if(nextOperation == "_APPEND") res = "<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->" + res;
-        if(nextOperation == "_APPEND_LN") res = "<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->\n" + res;
-        if(nextOperation == "_PREPEND") res = res + "<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->";
+        else if(nextOperation == "_APPEND_LN") res = "<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->\n" + res;
+        else if(nextOperation == "_PREPEND") res = res + "<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->";
         finalData = finalData.replace(new RegExp("<!--ABJAD_EXTENDER_YIELD="+nextSectionKey+"-->", 'g'), res);
         // JS
         if(nextOperation == "_APPEND") res = "\/.ABJAD_EXTENDER_YIELD="+nextSectionKey+".\/" + res;
-        if(nextOperation == "_APPEND_LN") res = "\/.ABJAD_EXTENDER_YIELD="+nextSectionKey+".\/\n" + res;
-        if(nextOperation == "_PREPEND") res = res + "\/.ABJAD_EXTENDER_YIELD="+nextSectionKey+".\/";
+        else if(nextOperation == "_APPEND_LN") res = "\/.ABJAD_EXTENDER_YIELD="+nextSectionKey+".\/\n" + res;
+        else if(nextOperation == "_PREPEND") res = res + "\/.ABJAD_EXTENDER_YIELD="+nextSectionKey+".\/";
         finalData = finalData.replace(new RegExp("\/.ABJAD_EXTENDER_YIELD="+nextSectionKey+".\/", 'g'), res);
         nextSectionKey = null;
         nextOperation = "";
