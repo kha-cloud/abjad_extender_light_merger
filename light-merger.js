@@ -14,6 +14,17 @@ context.initalTimerCounter = 0;
 context.initiatedFilesCounter = 0;
 context.interval;
 context.filesManager = new FilesManager();
+context.isFileEqualTo = (path_a, path_b) => {
+	try {
+		if(fs.existsSync(path_a) && fs.existsSync(path_b)){
+			return context.filesManager.isFileEqualTo(path_a, path_b);
+		}else{
+			return false;
+		}
+	} catch (error) {
+		return false;
+	}
+};
 
 //---------------------- GETTING PARAMS
 const Flags = {};// --log --no-watching --delete
@@ -266,7 +277,7 @@ var initWatcher = () => {
 							path
 						],
 					};
-					if(!context.filesManager.isFileEqualTo(path, getNewPath(path))){
+					if(!context.isFileEqualTo(path, getNewPath(path))){
 						fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
 					}
 				}else{
@@ -274,7 +285,7 @@ var initWatcher = () => {
 					generateMultiLevelFile(path, getNewPath(path), "add");
 				}
 			}else{
-				if(!context.filesManager.isFileEqualTo(path, getNewPath(path))){
+				if(!context.isFileEqualTo(path, getNewPath(path))){
 					fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
 				}
 			}
@@ -291,14 +302,14 @@ var initWatcher = () => {
 			await Helpers.delay(200);
 			if(Flags["merge-files"]) {
 				if(Files[getNewPath(path)].files.length == 1){
-					if(!context.filesManager.isFileEqualTo(path, getNewPath(path))){
+					if(!context.isFileEqualTo(path, getNewPath(path))){
 						fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
 					}
 				}else{
 					generateMultiLevelFile(path, getNewPath(path), "change");
 				}
 			}else{
-				if(!context.filesManager.isFileEqualTo(path, getNewPath(path))){
+				if(!context.isFileEqualTo(path, getNewPath(path))){
 					fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
 				}
 			}
