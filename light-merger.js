@@ -5,10 +5,15 @@ const fs = require("fs");
 const path = require("path"); 
 const merge = require('deepmerge')
 const Helpers = require('./helpers.js');
-var timerCallback = null;
-var initalTimerCounter = 0;
-var initiatedFilesCounter = 0;
-var interval;
+const { FilesManager } = require('turbodepot-node');
+
+const context = {};
+
+context.timerCallback = null;
+context.initalTimerCounter = 0;
+context.initiatedFilesCounter = 0;
+context.interval;
+context.filesManager = new FilesManager();
 
 //---------------------- GETTING PARAMS
 const Flags = {};// --log --no-watching --delete
@@ -102,7 +107,12 @@ var generateMultiLevelJSON = (path, newPath, mode) => {
 			throw "JSON ERROR in -> "+Files[newPath].files[i]
 		}
 	}
-  fs.writeFileSync(newPath, JSON.stringify(data, null, "\t"));
+	var finalContent = JSON.stringify(data, null, "\t");
+	// if(fs.existsSync(newPath)){
+	// 	var existContent = fs.readFileSync(newPath, 'utf8');
+	// 	if(existContent == finalContent) return;
+	// }
+  fs.writeFileSync(newPath, finalContent);
 }
 
 var generateMultiLevelTEXT = (path, newPath, mode) => {
@@ -111,6 +121,10 @@ var generateMultiLevelTEXT = (path, newPath, mode) => {
 	for (let i = 1; i < Files[newPath].files.length; i++) {
 		data = Helpers.abjadTextMerge(data, fs.readFileSync(Files[newPath].files[i], 'utf8'));
 	}
+	// if(fs.existsSync(newPath)){
+	// 	var existContent = fs.readFileSync(newPath, 'utf8');
+	// 	if(existContent == data) return;
+	// }
   fs.writeFileSync(newPath, data);
 }
 
@@ -179,14 +193,14 @@ var READY_EVENT = async () => {
 }
 
 if(Flags["no-watching"]){
-	timerCallback = READY_EVENT;
+	context.timerCallback = READY_EVENT;
 	READY_EVENT = ()=>{};
-	interval = setInterval(function(){
-		initalTimerCounter += 1;
-		if(initalTimerCounter > 4 && initiatedFilesCounter == 0){
-			clearInterval(interval);
+	context.interval = setInterval(function(){
+		context.initalTimerCounter += 1;
+		if(context.initalTimerCounter > 4 && context.initiatedFilesCounter == 0){
+			clearInterval(context.interval);
 			if(Flags["log"]) console.log("cleared ready timer");
-			timerCallback();
+			context.timerCallback();
 		}
 		//do whatever here..
 	}, 500);
@@ -238,8 +252,8 @@ var initWatcher = () => {
 	// var count = 0;
 	watcher
 		.on('add', async (path) => {
-			initalTimerCounter = 0;
-			initiatedFilesCounter ++;
+			context.initalTimerCounter = 0;
+			context.initiatedFilesCounter ++;
 			if(toExcludeFilesList.includes(path)) return;
 			await Helpers.delay(200);
 			// count++;
@@ -252,18 +266,22 @@ var initWatcher = () => {
 							path
 						],
 					};
-					fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
+					if(!context.filesManager.isFileEqualTo(path, getNewPath(path))){
+						fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
+					}
 				}else{
 					Files[getNewPath(path)].files.push(path);
 					generateMultiLevelFile(path, getNewPath(path), "add");
 				}
 			}else{
-				fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
+				if(!context.filesManager.isFileEqualTo(path, getNewPath(path))){
+					fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
+				}
 			}
 			if(Flags["log"]) console.log(`File ${path} has been added`);
 			// if (watcherAvailable) this.updater("add", path);
-			initiatedFilesCounter --;
-			initalTimerCounter = 0;
+			context.initiatedFilesCounter --;
+			context.initalTimerCounter = 0;
 		})
 		.on('change', async (path) => {
 			if(Flags["no-watching"]) {
@@ -273,12 +291,16 @@ var initWatcher = () => {
 			await Helpers.delay(200);
 			if(Flags["merge-files"]) {
 				if(Files[getNewPath(path)].files.length == 1){
-					fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
+					if(!context.filesManager.isFileEqualTo(path, getNewPath(path))){
+						fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
+					}
 				}else{
 					generateMultiLevelFile(path, getNewPath(path), "change");
 				}
 			}else{
-				fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
+				if(!context.filesManager.isFileEqualTo(path, getNewPath(path))){
+					fs.copyFile(path, getNewPath(path), fs.constants.COPYFILE_FICLONE, resultHandler);
+				}
 			}
 			if(Flags["log"]) console.log(`File ${path} has been changed`);
 			// if (watcherAvailable) this.updater("change", path);
