@@ -17,6 +17,7 @@ var deleteFolderContent = (folder) => {
 		// 	// console.log(f);
 		// 	fs.unlinkSync(folder+"/"+f);
 		// }
+    //
 	}
 };
 
