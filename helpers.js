@@ -55,7 +55,7 @@ var abjadTextMerge = (strA, strB) => {
       }
       var tmp = line.replace("#ABJAD_EXTENDER_SECTION", "").split("=");
       nextOperation = tmp[0].toUpperCase();
-      nextSectionKey = tmp[1];
+      nextSectionKey = (tmp[1] || "").replace(/ /g, '');// || tmp[0] && "_APPEND";
     }else{
       if(nextSectionKey){
         nextData.push(line);
@@ -102,7 +102,7 @@ var abjadHTMLMerge = (strA, strB) => {
       }
       var tmp = line.replace("#ABJAD_EXTENDER_SECTION", "").split("=");
       nextOperation = tmp[0].toUpperCase();
-      nextSectionKey = tmp[1];// || tmp[0] && "_APPEND";
+      nextSectionKey = (tmp[1] || "").replace(/ /g, '');// || tmp[0] && "_APPEND";
     }else{
       if(nextSectionKey){
         nextData.push(line);
