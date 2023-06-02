@@ -258,6 +258,7 @@ var initWatcher = () => {
 		},
 		// ignored: /(^|[\/\\])\../, // ignore dotfiles
 		// persistent: !this.buildOnly
+    awaitWriteFinish: true, // wait for the file to be fully written
 	});
 	// console.log("Watcher initiated");
 	// var count = 0;
